@@ -1,0 +1,42 @@
+name: Deploy to Cloudflare Workers
+
+on:
+  push:
+    branches:
+      - main  # 可以指定其他分支，默认在 main 分支上进行部署
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout the repository code
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Install Rust and Wasm toolchain
+      - name: Install Rust toolchain
+        run: rustup target add wasm32-unknown-unknown
+
+      # Build the Rust project to Wasm
+      - name: Build the project
+        run: cargo build --target wasm32-unknown-unknown --release
+
+      # Upload the Wasm file as an artifact (optional, for inspection)
+      - name: Upload Wasm artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: wasm-build
+          path: target/wasm32-unknown-unknown/release/YOUR_PROJECT_NAME.wasm
+
+      # Deploy to Cloudflare Workers using Wrangler
+      - name: Install Wrangler CLI
+        run: npm install -g wrangler
+
+      - name: Publish to Cloudflare Workers
+        env:
+          CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
+        run: wrangler publish
