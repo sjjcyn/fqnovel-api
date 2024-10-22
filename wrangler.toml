@@ -1,5 +1,6 @@
 name = "fqnovel-api"
 main = "build/worker/shim.mjs"
+account_id = "542a9424a8fcaaa7fb8d3a0c72e46765"  # 确保这个是 Cloudflare 仪表盘上正确的
 compatibility_date = "2024-09-06"
 
 
